@@ -75,7 +75,8 @@ export default {
       modalTitle: '',
       data: {},
       infoData: {},
-      url: ''
+      url: '',
+      language: this.$store.state.language
     }
   },
   components: {
@@ -85,7 +86,12 @@ export default {
     this.getData()
   },
   beforeUpdate () {
-    this.getData()
+    this.language = this.$store.state.language
+  },
+  watch: {
+    language: function () {
+      this.getData()
+    }
   },
   methods: {
     getData () {

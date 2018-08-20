@@ -45,14 +45,20 @@ export default {
     return {
       keyBtn: true,
       infoData: {},
-      url: ''
+      url: '',
+      language: this.$store.state.language
     }
   },
   mounted () {
     this.getData()
   },
   beforeUpdate () {
-    this.getData()
+    this.language = this.$store.state.language
+  },
+  watch: {
+    language: function () {
+      this.getData()
+    }
   },
   methods: {
     getData () {

@@ -11,9 +11,18 @@
 </template>
 
 <script>
-	export default {
-		name: 'buyWrap'
-	}
+import ProductService from '@/service/product/ProductService'
+export default {
+  name: 'buyWrap',
+  data () {
+    return {
+      productService: ProductService
+    }
+  },
+  methods: {
+
+  }
+}
 </script>
 
 <style lang="scss" scoped>

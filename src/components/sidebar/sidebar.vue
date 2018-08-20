@@ -39,38 +39,43 @@
 </template>
 
 <script>
-import ChangeHead from "./form/change-head";
-import axios from "axios";
+import ChangeHead from './form/change-head'
+import axios from 'axios'
 export default {
-  name: "LeftSidebar",
+  name: 'LeftSidebar',
   components: {
     ChangeHead
   },
-  data() {
+  data () {
     return {
       activeItem: 0,
       showHead: false,
       data: {},
       sidebarData: {},
       url: '',
-      currentUrl: window.location.href
-    };
+      currentUrl: window.location.href,
+      language: this.$store.state.language
+    }
   },
-  mounted() {
+  mounted () {
     this.getData()
     this.jump()
   },
-  beforeUpdate() {
-    this.getData()
+  beforeUpdate () {
+    this.language = this.$store.state.language
+  },
+  watch: {
+    language: function () {
+      this.getData()
+    }
   },
   methods: {
-    getData() {
-      var that = this;
-      axios.get(this.$store.state.url + "/components/sidebar/" + this.$store.state.jsonUrl).then(function(data) {
-        that.sidebarData = data.data.data;
-      });
+    getData () {
+      var that = this
+      axios.get(this.$store.state.url + '/components/sidebar/' + this.$store.state.jsonUrl).then(function (data) {
+        that.sidebarData = data.data.data
+      })
     },
-    
     jump () {
       if (this.currentUrl.indexOf('/setup-info') > -1) {
         this.activeItem = 0
@@ -80,33 +85,33 @@ export default {
         this.activeItem = 2
       }
     },
-    changeState: function(item) {
-      this.activeItem = item;
+    changeState: function (item) {
+      this.activeItem = item
     },
     // 显示修改头像
-    mouseIn() {
-      console.log(this.$store.state.language);
-      this.showHead = true;
+    mouseIn () {
+      console.log(this.$store.state.language)
+      this.showHead = true
     },
     // 隐藏修改头像
-    mouseOut() {
-      this.showHead = false;
+    mouseOut () {
+      this.showHead = false
     },
     // 模态框确定
-    confirm() {
-      this.$refs.myModalRef.hide();
+    confirm () {
+      this.$refs.myModalRef.hide()
     },
     // 模态框关闭
-    cancel() {
-      this.$refs.myModalRef.hide();
+    cancel () {
+      this.$refs.myModalRef.hide()
     },
     // 模态框-上传头像
-    updateImg() {
-      this.$refs.myModalRef.show();
-      this.data = {};
+    updateImg () {
+      this.$refs.myModalRef.show()
+      this.data = {}
     }
   }
-};
+}
 </script>
 
 <style lang='scss' scoped>

@@ -150,7 +150,8 @@ export default {
       status: 'not_accepted',
       addressState: '',
       modalTitle: '',
-      data: {}
+      data: {},
+      language: this.$store.state.language
     }
   },
   components: {
@@ -160,7 +161,12 @@ export default {
     this.getData()
   },
   beforeUpdate () {
-    this.getData()
+    this.language = this.$store.state.language
+  },
+  watch: {
+    language: function () {
+      this.getData()
+    }
   },
   methods: {
     getData () {

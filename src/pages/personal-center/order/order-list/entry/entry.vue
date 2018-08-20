@@ -44,10 +44,23 @@
 </template>
 
 <script>
+import OrderService from '@/service/order/OrderService'
 export default {
   name: 'Entry',
   data () {
-    return {}
+    return {
+      orderService: OrderService
+    }
+  },
+  created () {
+    this.getOrder()
+  },
+  methods: {
+    getOrder () {
+      this.orderService.fetchAllOrder({}).then((results) => {
+        console.log(results)
+      })
+    }
   }
 }
 </script>

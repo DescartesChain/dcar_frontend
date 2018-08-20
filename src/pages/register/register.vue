@@ -16,7 +16,7 @@
                <side-ver @child-say="listenToMyBoy"></side-ver>
                <div class="v_code">
                   <input type="number" placeholder="请输入邮件验证码">
-                  <button :class="{ mustNot: provState == 0 }" @click="getCode">获取验证码</button>
+                  <a :class="{ mustNot: provState == 0 }" @click="getCode">获取验证码</a>
                </div>
                <input type="password" placeholder="请设置密码" v-model="password">
                <input type="password" placeholder="请再次确认密码" v-model="surePassword">
@@ -57,8 +57,10 @@ export default {
     },
     // 获取验证码
     getCode () {
-      if (this.provState == 0) {
-        alert('先进行验证')
+      if (this.provState === 0) {
+        this.$toaster.error('先进行验证')
+      } else {
+        this.$toaster.success('验证码已发送至您的邮箱')
       }
     },
     found () {
@@ -67,7 +69,15 @@ export default {
         'email': this.email,
         'password': this.password
       }).then((results) => {
-        console.log(results)
+        if (results.success) {
+          this.$toaster.success('注册成功')
+          let that = this
+          setTimeout(() => {
+            that.$router.push({
+              name: 'login'
+            })
+          }, 1500)
+        }
       })
     }
   }

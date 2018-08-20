@@ -91,9 +91,12 @@ input[type="number"]{
     position: relative;
     margin-bottom: 0;
 }
-.v_code button{
+.v_code a{
+    display: block;
     width: 118px;
     height: 50px;
+    text-align: center;
+    line-height: 50px;
     background: #6474CE;
     color: #ffffff;
     font-size: $font_md;
@@ -106,6 +109,9 @@ input[type="number"]{
     right: 0;
     top: 0;
     outline: none;
+}
+.v_code a:hover{
+    color: #fff;
 }
 .land{
     width: 100%;

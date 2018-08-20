@@ -2,7 +2,7 @@
   <div class="header_wrap">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <router-link to="/home">
-        <a class="navbar-brand" href="#"><img src="../../assets/img/home/logo.png" /></a>
+        <a class="navbar-brand"><img src="../../assets/img/home/logo.png" /></a>
       </router-link>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span></button>
@@ -10,7 +10,7 @@
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
             <router-link to="/home">
-              <a class="nav-link" href="#">主页<span class="sr-only">(current)</span></a>
+              <a class="nav-link">主页<span class="sr-only">(current)</span></a>
             </router-link>
           </li>
           <router-link to="/home#applications" tag="li">
@@ -28,38 +28,34 @@
         </ul>
         <div class="navbar-nav ml-auto">
           <li class="nav-item">
-            <router-link to="product">
-              <a class="nav-link product" href="#">产品</a>
-            </router-link>
+            <a class="nav-link product" @click="$router.push('/product')">产品</a>
           </li>
         </div>
         <!--登录状态-->
         <div class="navbar-nav ml-auto" v-if="isLog">
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Lang
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#" @click="en">EN</a>
-              <a class="dropdown-item" href="#" @click="ch">CH</a>
+              <a class="dropdown-item" @click="en">EN</a>
+              <a class="dropdown-item" @click="ch">CH</a>
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" @click="goRegister">
+            <a class="nav-link" @click="goRegister">
               <img class="cart" src="../../assets/img/home/cart.png" />
               <span class="badge badge-warning">99</span>
             </a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img v-if="isFace" class="img-circle" src="../../assets/img/home/face.png" />
               <i v-else class="icon iconfont">&#xe611;</i>
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <router-link :to="{name:'PersonalCenter'}">
-                <a class="dropdown-item" href="#">个人设置</a>
-              </router-link>
-              <a class="dropdown-item" href="#">退出</a>
+              <a class="dropdown-item" @click="$router.push('/personal-center/setup-info')">个人设置</a>
+              <a class="dropdown-item">退出</a>
             </div>
           </li>
 
@@ -67,22 +63,22 @@
         <!--未登录状态-->
         <div class="navbar-nav ml-auto" v-else>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Lang
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#" @click="en">EN</a>
-              <a class="dropdown-item" href="#" @click="ch">CH</a>
+              <a class="dropdown-item"  @click="en">EN</a>
+              <a class="dropdown-item"  @click="ch">CH</a>
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" @click="goRegister">
+            <a class="nav-link"  @click="goRegister">
               <i class="icon iconfont">&#xe61a;</i>
               <span>注册</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" @click="goLogin">
+            <a class="nav-link"  @click="goLogin">
               <i class="icon iconfont">&#xe600;</i>
               <span>登录</span>
             </a>

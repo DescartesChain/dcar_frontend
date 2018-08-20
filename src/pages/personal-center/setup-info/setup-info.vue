@@ -40,19 +40,28 @@ export default {
     return {
       url: '',
       infoState: '{{infoData.optionOne}}',
-      infoData: {}
+      infoData: {},
+      language: this.$store.state.language
     }
+  },
+  created () {
+    this.getData()
   },
   mounted () {
     this.getData()
   },
   beforeUpdate () {
-    this.getData()
+    this.language = this.$store.state.language
+  },
+  watch: {
+    language: function () {
+      this.getData()
+    }
   },
   methods: {
     getData () {
       var that = this
-      axios.get(this.$store.state.url + '/pages/personal-center/setup-info/' + this.$store.state.jsonUrl).then(function(data) {
+      axios.get(this.$store.state.url + '/pages/personal-center/setup-info/' + this.$store.state.jsonUrl).then(function (data) {
         that.infoData = data.data.data
       })
     },
