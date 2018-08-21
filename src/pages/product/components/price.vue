@@ -1,8 +1,8 @@
 <template>
 	<div class="price_page">
-		<h3 class="title">DCAR Miner   x1</h3>
-		<p class="intro">First generation high performance cartesian mining machine</p>
-		<h4 class="price">$1820</h4>
+		<h3 class="title">{{this.productData.name}}</h3>
+		<p class="intro">{{this.productData.describe}}</p>
+		<h4 class="price">${{this.productData.price}}</h4>
 		<span class="buybtn">立即购买</span>
 		<div class="product">
 			<img src="../../../assets/img/home/product_1.png" />
@@ -12,9 +12,37 @@
 </template>
 
 <script>
-	export default {
-		name: 'priceWrap'
-	}
+import ProductService from '@/service/product/ProductService'
+export default {
+	name: 'priceWrap',
+	data () {
+    return {
+			productService: ProductService,
+			productData: {
+				'createdAt': 1534758817390,
+				'creator': '5b7a63a46cd3dd0dd704662f',
+				'describe': '',
+				'discount': 0,
+				'name': '',
+				'pics': [],
+				'price': 0,
+				'status': 0
+			}
+    }
+	},
+	created () {
+		this.getProduct()
+	},
+  methods: {
+		getProduct() {
+			this.productService.fetchAllProduct({}).then((results) => {
+				if (results.data.success) {
+					this.productData = results.data.data[0]
+				}
+			})
+		}
+  }
+}
 </script>
 
 <style lang="scss" scoped>

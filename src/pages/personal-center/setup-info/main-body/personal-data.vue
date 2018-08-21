@@ -1,13 +1,14 @@
 // 个人资料
 <template>
   <div class="personal_main">
+    <p style="display: none;">{{this.$store.state.language}}</p>
     <!-- 上半部分--基本信息 -->
     <div class="personal_top">
       <div class="personal_title">{{infoData.personalTitle}}</div>
       <!-- 用户名 -->
       <div class="info_main username_main">
         <span class="grey_title">{{infoData.userName}}</span>
-        <span>啦啦啦啦</span>
+        <span>{{this.username}}</span>
         <span class="alter_img">
           <img src="~@/assets/img/setup-info/alter-info.png" alt="" @click="showModal('username')">
         </span>
@@ -16,7 +17,7 @@
       <!-- 邮箱 -->
       <div class="info_main">
         <span class="grey_title">{{infoData.email}}</span>
-        <span class="orange_text" @click="showModal('email')">{{infoData.bind}}</span>
+        <span class="orange_text">{{this.userInfo.email}}</span>
         <span class="grey_alert">{{infoData.showWay}}</span>
       </div>
       <!-- 性别 -->
@@ -67,17 +68,26 @@
 <script>
 import axios from 'axios'
 import BindInfo from './form/bind-info'
+import UserService from '@/service/user/UserService'
 export default {
   name: 'PersonalData',
   data () {
     return {
+      userService: UserService,
       checkState: 'man',
       modalTitle: '',
       data: {},
       infoData: {},
       url: '',
-      language: this.$store.state.language
+      language: this.$store.state.language,
+      username: localStorage.getItem('name'),
+      userInfo: {
+        'email': ''
+      }
     }
+  },
+  created () {
+    this.getUserInfo()
   },
   components: {
     BindInfo
@@ -124,6 +134,14 @@ export default {
     // 关闭模态框
     closeModal () {
       this.$refs.myModalRef.hide()
+    },
+    // 获取用户信息
+    getUserInfo () {
+      this.userService.fetchUserInfo(localStorage.getItem('name')).then((results) => {
+        if (results.data.success) {
+          this.userInfo = results.data.data
+        }
+      })
     }
   }
 }

@@ -7,7 +7,7 @@
       </div>
       <div class="col-md-7 original_pic">
           <img src="~@/assets/img/setup-info/head.png" alt="">
-          <input type="file" class="filepath" id="update"/>
+          <input type="file" @change="uploadImg($event)" class="filepath" id="update"/>
           <p>
               <label for="update">
                   重新上传
@@ -19,19 +19,27 @@
 </template>
 
 <script>
+import UserService from '@/service/user/UserService'
 export default {
   name: 'ChangeHead',
   props: {
-    message: {}
+    message: {},
   },
   data () {
     return {
-      dataMain: 'zizizi'
+      userService: UserService,
+      // dataMain: 'zizizi'
     };
   },
   methods: {
-    giveAdvice () {
-      this.$emit('give-advice', '123456')
+    // giveAdvice () {
+    //   this.$emit('give-advice', '123456')
+    // },
+    uploadImg (event) {
+      console.log(localStorage.getItem('userid'))
+      // this.userService.uploadHeadImage(localStorage.getItem('userid'), event.target.files[0]).then((results) => {
+      //   console.log(results)
+      // })
     }
   }
 }

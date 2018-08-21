@@ -1,6 +1,7 @@
 // 收货地址管理
 <template>
   <div class="address_main">
+    <p style="display: none;">{{this.$store.state.language}}</p>
     <!-- 上半部分--我的地址 -->
     <div class="address_top">
       <div class="address_title">

@@ -2,8 +2,8 @@
 	<div class="buy_page">
 		<div class="content">
 			<p class="procuct">
-				<span>DCAR Miner</span>
-				<span class="version">x1</span>
+				<span>{{this.productData.name}}</span>
+				<!-- <span class="version">x1</span> -->
 			</p>
 			<span class="buy">购买</span>
 		</div>
@@ -16,11 +16,30 @@ export default {
   name: 'buyWrap',
   data () {
     return {
-      productService: ProductService
+			productService: ProductService,
+			productData: {
+				'createdAt': 1534758817390,
+				'creator': '5b7a63a46cd3dd0dd704662f',
+				'describe': '',
+				'discount': 0,
+				'name': '',
+				'pics': [],
+				'price': 0,
+				'status': 0
+			}
     }
-  },
+	},
+	created () {
+		this.getProduct()
+	},
   methods: {
-
+		getProduct() {
+			this.productService.fetchAllProduct({}).then((results) => {
+				if (results.data.success) {
+					this.productData = results.data.data[0]
+				}
+			})
+		}
   }
 }
 </script>

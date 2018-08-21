@@ -1,7 +1,7 @@
 <template>
   <div class="bind_info">
     <div v-if="message.state == 'username'">
-      <input type="text" class="user_input" placeholder="请输入新的用户名，2~8位字符">
+      <input type="text" class="user_input" placeholder="请输入新的用户名，2~8位字符" v-model="name">
     </div>
     <div v-if="message.state == 'email'">
       <input type="text" class="user_input" placeholder="请输入邮箱地址">
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import UserService from '@/service/user/UserService'
 import SIdentify from '@/components/identify'
 var code // 在全局定义验证码
 export default {
@@ -38,11 +39,13 @@ export default {
   },
   data () {
     return {
+      userService: UserService,
       dataMain: 'zizizi',
       picLyanzhengma: '',
       checkCode: '',
-      identifyCodes: '1234567890',
-      identifyCode: ''
+      identifyCodes: '1234567890abcdefghijklmnopqrstuvwxyz',
+      identifyCode: '',
+      name: ''
     }
   },
   mounted () {
@@ -61,6 +64,7 @@ export default {
       for (let i = 0; i < l; i++) {
         this.identifyCode += this.identifyCodes[this.randomNum(0, this.identifyCodes.length)]
       }
+      console.log(this.identifyCode)
     },
     // 模态框确定
     confirm () {
@@ -71,27 +75,20 @@ export default {
       this.$emit('close-modal')
     },
     Login () {
-      if (this.picLyanzhengma == this.identifyCode) {
-        alert('成功')
-        // var that = this;
-        // $.ajax({
-        //   type: "POST",
-        //   url: this.HOST + "/user/logincheck",
-        //   data: {
-        //     loginmobileNo: this.LUserPhone,
-        //     loginpassword: this.LUserPsd
-        //   },
-        //   dataType: "json",
-        //   success: function(data) {
-        //     console.log(data);
-        //     if (data.resultflag == "F") {
-        //       $(".login_content1 span:eq(0)").removeClass("disappear");
-        //       $(".login_content1 span:eq(0)").text("手机号或密码错误。");
-        //     } else {
-        //       that.$router.push({ path: "/brain-assetList1" });
-        //     }
-        //   }
-        // });
+      if (this.message.state == 'username') {
+        if (this.name == '') {
+          this.$toaster.error('用户名不能为空')
+        } else {
+          if (this.picLyanzhengma == this.identifyCode) {
+            this.userService.alterUserInfo(localStorage.getItem('userid')).then((results) => {
+              if (results.data.success) {
+                this.$toaster.success('修改成功')
+              }
+            })
+          } else {
+            this.$toaster.error('验证码错误')
+          }
+        }
       }
     }
   }

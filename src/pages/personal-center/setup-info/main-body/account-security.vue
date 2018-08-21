@@ -1,6 +1,7 @@
 // 账号安全
 <template>
   <div class="account_main">
+    <p style="display: none;">{{this.$store.state.language}}</p>
     <!-- 上半部分 -->
     <div class="account_top">
       <p class="account_title">{{infoData.keyTitle}}</p>
@@ -30,7 +31,7 @@
         <input type="password" class="old_key" :placeholder="infoData.confirmPasswordAlert">
       </div>
       <div class="sure_box">
-        <button class="sure_btn">{{infoData.sure}}</button>
+        <button class="sure_btn" @click="ensure">{{infoData.sure}}</button>
         <button class="back_btn" @click="back">{{infoData.return}}</button>
       </div>
     </div>
@@ -72,6 +73,9 @@ export default {
     },
     back () {
       this.keyBtn = true
+    },
+    ensure () {
+      
     }
   }
 }

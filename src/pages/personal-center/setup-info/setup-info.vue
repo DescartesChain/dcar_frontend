@@ -12,6 +12,7 @@
           <span v-bind:class="{'activeItem':infoState=='{{infoData.optionThree}}'}" @click="chooseInfo('{{infoData.optionThree}}')">{{infoData.optionThree}}</span>
         </li>
       </ul>
+      <p style="display: none;">{{this.$store.state.language}}</p>
       <div class="info_main">
           <personal-data v-if="infoState=='{{infoData.optionOne}}'"></personal-data>
           <account-security v-if="infoState=='{{infoData.optionTwo}}'"></account-security>

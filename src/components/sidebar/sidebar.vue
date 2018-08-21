@@ -1,12 +1,13 @@
 <template>
    <div class="sidebar">
+       <p style="display: none;">{{this.$store.state.language}}</p>
        <!-- 个人信息部分 -->
        <div class="sidebar_top">
          <div class="head_box"  @mouseenter="mouseIn" @mouseleave="mouseOut">
           <img src="~@/assets/img/setup-info/big-head.png" alt="">
           <span class="change_head" v-if="showHead == true"  @click.prevent="updateImg">{{sidebarData.changeHeader}}</span>
          </div>
-         <p class="user_name">用户名</p>
+         <p class="user_name">{{this.username}}</p>
          <p class="time_alert">hi! 下午好!</p>
        </div>
        <!-- 导航部分 -->
@@ -54,7 +55,8 @@ export default {
       sidebarData: {},
       url: '',
       currentUrl: window.location.href,
-      language: this.$store.state.language
+      language: this.$store.state.language,
+      username: localStorage.getItem('name')
     }
   },
   mounted () {

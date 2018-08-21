@@ -69,7 +69,7 @@ export default {
         'email': this.email,
         'password': this.password
       }).then((results) => {
-        if (results.success) {
+        if (results.data.success) {
           this.$toaster.success('注册成功')
           let that = this
           setTimeout(() => {

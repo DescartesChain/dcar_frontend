@@ -7,42 +7,24 @@
     </div>
     <ul class="option_list">
       <li class="option_title">状态</li>
-      <li :class="{'active_option':optionState == '全部'}" @click="changeOption('全部')">全部</li>
-      <li :class="{'active_option':optionState == '已使用'}" @click="changeOption('已使用')">已使用</li>
-      <li :class="{'active_option':optionState == '未使用'}" @click="changeOption('未使用')">未使用</li>
+      <li :class="{'active_option':optionState == '全部'}" @click="changeOption('全部', 2)">全部</li>
+      <li :class="{'active_option':optionState == '已使用'}" @click="changeOption('已使用', 1)">已使用</li>
+      <li :class="{'active_option':optionState == '未使用'}" @click="changeOption('未使用', 0)">未使用</li>
     </ul>
     <!-- 兑换码 -->
-    <div class="code_main">
-      <div class="code_total">共有2条数据</div>
+    <div class="code_main" v-if="voucherArray.length > 0">
+      <div class="code_total">共有{{this.voucherArray.length}}条数据</div>
       <ul class="code_body">
-        <li>
-          <span class="code_num">TADKF - H64SS - F5566</span>
-        </li>
-        <li>
-          <span class="code_num">TADKF - H64SS - F5566</span>
-        </li>
-        <li>
-          <span class="code_num">TADKF - H64SS - F5566</span>
-        </li>
-        <li>
-          <span class="code_num">TADKF - H64SS - F5566</span>
-        </li>
-        <li>
-          <span class="code_num">TADKF - H64SS - F5566</span>
-        </li>
-        <li>
-          <span class="code_num">TADKF - H64SS - F5566</span>
-        </li>
-        <li>
-          <span class="code_num">TADKF - H64SS - F5566</span>
+        <li v-for="item of voucherArray" :key="item._id" v-if="item.status == optionStatus">
+          <span class="code_num">{{item.code}}</span>
         </li>
       </ul>
     </div>
     <!-- 无兑换码 -->
-    <!-- <div class="no_code_main">
+    <div class="no_code_main" v-if="voucherArray.length == 0">
       <img src="~@/assets/img/cdKey/no-code.png" alt="">
       <p>啊哦~暂时没有兑换码，快点击右上方添加吧！</p>
-    </div> -->
+    </div>
     <!-- 模态框 添加兑换码-->
     <b-modal ref="myModalRef" title="添加兑换码">
       <add-code :message="data"></add-code>
@@ -56,22 +38,46 @@
 </template>
 
 <script>
+import VoucherService from '@/service/voucher/VoucherService'
 import AddCode from './form/add-code'
 export default {
   name: 'MyCDKey',
   data () {
     return {
+      voucherService: VoucherService,
       data: '',
-      optionState: '未使用'
+      optionState: '全部',
+      optionStatus: 0,
+      allVoucher: [],
+      voucherArray: []
     }
   },
   components: {
     AddCode
   },
+  created () {
+    this.getAllVoucher()
+  },
   methods: {
     // 选择兑换码状态
-    changeOption (state) {
+    changeOption (state, num) {
+      this.voucherArray = []
       this.optionState = state
+      if (num == 0) {
+        for (let i = 0; i < this.allVoucher.length; i++) {
+          if (this.allVoucher[i].status == 0) {
+            this.voucherArray.push(this.allVoucher[i])
+          }
+        }
+      } else if (num == 1){
+        for (let i = 0; i < this.allVoucher.length; i++) {
+          if (this.allVoucher[i].status == 1) {
+            this.voucherArray.push(this.allVoucher[i])
+          }
+        }
+      } else if (num == 2){
+        this.getAllVoucher()
+      }
     },
     // 模态框确定
     confirm () {
@@ -89,6 +95,15 @@ export default {
     showModal () {
       this.$refs.myModalRef.show()
       this.data = {}
+    },
+    // 获取所有验证码
+    getAllVoucher () {
+      this.voucherService.foundAllVoucher({}).then((results) => {
+        if (results.data.success) {
+          this.allVoucher = results.data.data
+          this.voucherArray = results.data.data
+        }
+      })
     }
   }
 }
