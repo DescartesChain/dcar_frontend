@@ -8,7 +8,7 @@
           <span class="change_head" v-if="showHead == true"  @click.prevent="updateImg">{{sidebarData.changeHeader}}</span>
          </div>
          <p class="user_name">{{this.username}}</p>
-         <p class="time_alert">hi! 下午好!</p>
+         <p class="time_alert">hi! {{timeSlot}}!</p>
        </div>
        <!-- 导航部分 -->
        <div class="sidebar_bottom">
@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import VueCookie from '@/util/util'
 import ChangeHead from './form/change-head'
 import axios from 'axios'
 export default {
@@ -56,8 +57,17 @@ export default {
       url: '',
       currentUrl: window.location.href,
       language: this.$store.state.language,
-      username: localStorage.getItem('name')
+      username: '',
+      timeSlot: ''
     }
+  },
+  created () {
+    if (localStorage.getItem('name')) {
+      this.username = localStorage.getItem('name')
+    } else {
+      this.username = VueCookie.getCookie('name')
+    }
+    this.getCurrentTime()
   },
   mounted () {
     this.getData()
@@ -111,6 +121,21 @@ export default {
     updateImg () {
       this.$refs.myModalRef.show()
       this.data = {}
+    },
+    // 获取当前时间段
+    getCurrentTime () {
+      let time = new Date().getHours()
+      if (time > 8 && time < 12) {
+        this.timeSlot = '上午好'
+      } else if (time > 12 && time < 14) {
+        this.timeSlot = '中午好'
+      } else if (time > 14 && time < 16) {
+        this.timeSlot = '下午好'
+      } else if (time > 16 && time < 24) {
+        this.timeSlot = '晚上好'
+      } else if (time > 0 && time < 8) {
+        this.timeSlot = '凌晨好'
+      }
     }
   }
 }

@@ -3,9 +3,9 @@
       <div class="info">
           <p>收货信息</p>
           <ul>
-              <li>订单号：123456789123456789</li>
-              <li>收货人：郭大狗&nbsp;186****4140</li>
-              <li>收货地址：河南省郑州市郑东新区</li>
+              <li>订单号：{{data._id}}</li>
+              <li>收货人：{{data.customer.name}}&nbsp;186****4140</li>
+              <li>收货地址：{{data.shipAddress}}</li>
           </ul>
       </div>
       <div class="info">
@@ -21,9 +21,12 @@
 <script>
 export default {
   name: 'CollectGoods',
+  props: ['data'],
   data () {
     return {
     }
+  },
+  created () {
   }
 }
 </script>

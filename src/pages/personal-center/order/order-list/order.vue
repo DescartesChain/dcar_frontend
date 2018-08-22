@@ -1,7 +1,7 @@
 <template>
   <div class="order">
       <ul class="order_nav">
-        <li class="active">全部订单<span>0</span></li>
+        <li class="active">全部订单<span>{{this.allUserOrder.length}}</span></li>
         <li>待发货<span>0</span></li>
         <li>待收货<span>0</span></li>
       </ul>
@@ -29,26 +29,31 @@
           </ul>
         </div>
       </div>
-      <not-order v-if="notOrder"></not-order>
-      <entry></entry>
+      <not-order v-if="allUserOrder.length == 0"></not-order>
+      <entry v-if="allUserOrder.length > 0" :order="allUserOrder"></entry>
   </div>
 </template>
 
 <script>
+import UserService from '@/service/user/UserService'
 import NotOrder from './not-order/not-order'
 import Entry from './entry/entry'
 export default {
   name: 'Order',
   data () {
     return {
+      userService: UserService,
       all: '全部',
       downMain: false,
-      notOrder: false
+      allUserOrder: []
     }
   },
   components: {
     NotOrder,
     Entry
+  },
+  created () {
+    this.getUserOrder()
   },
   methods: {
     choiseSelect () {
@@ -61,6 +66,16 @@ export default {
     choiseState (data) {
       this.all = data
       this.downMain = false
+    },
+    getUserOrder () {
+      this.userService.fetchUserOrder(localStorage.getItem('userid')).then((results) => {
+        if (results.data.success) {
+          this.allUserOrder = results.data.data
+        } else {
+          this.allUserOrder = []
+          this.$toaster.error(results.data.msg)
+        }
+      })
     }
   }
 }

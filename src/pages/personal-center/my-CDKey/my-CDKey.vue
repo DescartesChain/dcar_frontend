@@ -69,13 +69,13 @@ export default {
             this.voucherArray.push(this.allVoucher[i])
           }
         }
-      } else if (num == 1){
+      } else if (num == 1) {
         for (let i = 0; i < this.allVoucher.length; i++) {
           if (this.allVoucher[i].status == 1) {
             this.voucherArray.push(this.allVoucher[i])
           }
         }
-      } else if (num == 2){
+      } else if (num == 2) {
         this.getAllVoucher()
       }
     },

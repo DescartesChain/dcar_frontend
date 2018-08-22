@@ -9,6 +9,10 @@ const OrderService = {
   // 根据用户名查找用户信息
   fetchUserInfo: (info) => {
     return axios.get(CurrentInterface + 'order/' + info)
+  },
+  // 根据id查找订单信息
+  queryOrderInfo: (info) => {
+    return axios.get(CurrentInterface + 'order/' + info)
   }
 }
 export default OrderService

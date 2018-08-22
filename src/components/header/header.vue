@@ -55,7 +55,7 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" @click="$router.push('/personal-center/setup-info')">个人设置</a>
-              <a class="dropdown-item">退出</a>
+              <a class="dropdown-item" @click="quit">退出</a>
             </div>
           </li>
 
@@ -90,10 +90,12 @@
 </template>
 
 <script>
+import AuthenticationService from '@/service/authentication/AuthenticationService'
 export default {
   name: 'HeaderWrap',
   data () {
     return {
+      authenticationService: AuthenticationService,
       isLog: true,
       isFace: false
     }
@@ -121,6 +123,11 @@ export default {
     },
     ch () {
       this.$store.commit('languageChange', 'chinese')
+    },
+    quit () {
+      this.authenticationService.logout({}).then((results) => {
+        console.log(results)
+      })
     }
   }
 }

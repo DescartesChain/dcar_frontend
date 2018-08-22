@@ -38,6 +38,7 @@
 
 <script>
 import axios from 'axios'
+import VueCookie from '@/util/util'
 import AuthenticationService from '@/service/authentication/AuthenticationService'
 export default {
   name: 'Login',
@@ -112,6 +113,7 @@ export default {
         }).then((results) => {
           if (results.data.success) {
             this.$toaster.success('登录成功')
+            VueCookie.setCookie('name', this.username, 7)
             localStorage.setItem('userid', results.data.data.id)
             localStorage.setItem('token', results.data.data.token)
             let that = this

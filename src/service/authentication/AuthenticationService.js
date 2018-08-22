@@ -8,7 +8,7 @@ const AuthenticationService = {
   },
   // 注销
   logout: (info) => {
-    return axios.post(CurrentInterface + 'logout', info)
+    return axios.get(CurrentInterface + 'logout', info)
   }
 }
 export default AuthenticationService

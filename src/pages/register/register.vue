@@ -74,9 +74,11 @@ export default {
           let that = this
           setTimeout(() => {
             that.$router.push({
-              name: 'login'
+              name: 'Login'
             })
           }, 1500)
+        } else {
+          this.$toaster.error(results.data.msg)
         }
       })
     }

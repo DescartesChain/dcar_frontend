@@ -17,7 +17,7 @@
       <!-- 邮箱 -->
       <div class="info_main">
         <span class="grey_title">{{infoData.email}}</span>
-        <span class="orange_text">{{this.userInfo.email}}</span>
+        <span class="orange_text" @click="showModal('email')">{{this.userInfo.email}}</span>
         <span class="grey_alert">{{infoData.showWay}}</span>
       </div>
       <!-- 性别 -->
@@ -67,6 +67,7 @@
 
 <script>
 import axios from 'axios'
+import VueCookie from '@/util/util'
 import BindInfo from './form/bind-info'
 import UserService from '@/service/user/UserService'
 export default {
@@ -80,13 +81,18 @@ export default {
       infoData: {},
       url: '',
       language: this.$store.state.language,
-      username: localStorage.getItem('name'),
+      username: '',
       userInfo: {
         'email': ''
       }
     }
   },
   created () {
+    if (localStorage.getItem('name')) {
+      this.username = localStorage.getItem('name')
+    } else {
+      this.username = VueCookie.getCookie('name')
+    }
     this.getUserInfo()
   },
   components: {
@@ -128,7 +134,7 @@ export default {
       if (state === 'username') {
         this.modalTitle = '修改用户名'
       } else {
-        this.modalTitle = '绑定邮箱账号'
+        this.modalTitle = '修改邮箱账号'
       }
     },
     // 关闭模态框
@@ -137,9 +143,11 @@ export default {
     },
     // 获取用户信息
     getUserInfo () {
-      this.userService.fetchUserInfo(localStorage.getItem('name')).then((results) => {
+      this.userService.fetchUserInfo(localStorage.getItem('userid')).then((results) => {
         if (results.data.success) {
           this.userInfo = results.data.data
+        } else {
+          this.$toaster.error(results.data.msg)
         }
       })
     }

@@ -6,37 +6,29 @@
     <div class="address_top">
       <div class="address_title">
         {{infoData.addressTitle}}
-        <span>（共3条）</span>
+        <span>（共{{addressList.length}}条）</span>
       </div>
-      <div class="add_address">{{infoData.addAddress}}</div>
+      <!-- 新增收货地址 -->
+      <div class="add_address" @click="operateAddress('add')">{{infoData.addAddress}}</div>
       <!-- 地址列表 -->
-      <ul class="each_address" @mouseenter="mouseIn('1')"  @mouseleave="mouseOut" :class="{'activeAddress':addressState == '1'}">
-        <li>河南省郑州市郑东新区XX路XX号XX大厦XX楼 &nbsp;&nbsp;&nbsp;收货人：啦啦啦 &nbsp;&nbsp;&nbsp;186****4455</li>
-        <li v-if="addressState == '1'">设置为默认</li>
-        <li v-if="addressState !== '1'">
-          <span class="default_address">默认地址</span>
-        </li>
-        <li v-if="addressState == '1'">
-          <span>修改</span>
-          |
-          <span>删除</span>
-        </li>
-      </ul>
-      <ul class="each_address" @mouseenter="mouseIn('2')" @mouseleave="mouseOut" :class="{'activeAddress':addressState == '2'}">
-        <li>河南省郑州市郑东新区XX路XX号XX大厦XX楼 &nbsp;&nbsp;&nbsp;收货人：啦啦啦 &nbsp;&nbsp;&nbsp;186****4455</li>
-        <li v-if="addressState == '2'" class="set_default">设置为默认</li>
-        <li v-if="addressState !== '2'">
-          <span class="default_address">默认地址</span>
-        </li>
-        <li v-if="addressState == '2'">
-          <span>修改</span>
-          |
-          <span @click="showModal">删除</span>
-        </li>
-      </ul>
+      <div v-if="addressList.length >0">
+        <ul class="each_address" @mouseenter="mouseIn(addressInfo._id)"  @mouseleave="mouseOut" :class="{'activeAddress':addressState == addressInfo._id}" v-for="addressInfo in addressList" :key="addressInfo._id">
+          <li>{{addressInfo.province}}{{addressInfo.city}}{{addressInfo.district}}{{addressInfo.street}} &nbsp;&nbsp;&nbsp;收货人：{{addressInfo.receiver}} &nbsp;&nbsp;&nbsp;{{addressInfo.phone.toString().substring(0,3)}}****{{addressInfo.phone.toString().substring(7)}}</li>
+          <li v-if="addressState == addressInfo._id" style="cursor:pointer">设置为默认</li>
+          <li v-if="addressState !== addressInfo._id">
+            <span class="default_address">默认地址</span>
+          </li>
+          <li v-if="addressState == addressInfo._id">
+            <span @click="operateAddress('alter',addressInfo)">修改</span>
+            |
+            <span @click="deleteAddress(addressInfo._id)">删除</span>
+          </li>
+        </ul>
+      </div>
+      <div v-if="addressList.length == 0" class="no_data">暂无收货地址</div>
     </div>
     <!-- 下半部分--新增收货地址 -->
-    <div class="address_bottom">
+    <div class="address_bottom" v-if="showAddressBox == true">
       <div class="bottom_title">新增收货地址</div>
       <!-- 收货人姓名 -->
       <div class="each_line">
@@ -44,7 +36,7 @@
           <span class="required">*</span>
           {{infoData.addressName}}：
         </span>
-        <input type="text" class="address_input middle_input">
+        <input type="text" class="address_input middle_input" v-model="addressDetail.receiver">
         <span class="input_error">
           <img src="~@/assets/img/cdKey/input-error.png" alt="">
           {{infoData.nameAlert}}
@@ -56,14 +48,14 @@
           <span class="required">*</span>
           {{infoData.addressMobile}}：
         </span>
-        <input type="text" class="address_input middle_input">
+        <input type="text" class="address_input middle_input" v-model="addressDetail.phone">
         <span class="input_error">
           <img src="~@/assets/img/cdKey/input-error.png" alt="">
           {{infoData.mobileAlert}}
         </span>
       </div>
       <!-- 电话号码 -->
-      <div class="each_line">
+      <!-- <div class="each_line">
         <span class="input_title">
           <span class="required">*</span>
           {{infoData.addressPhone}}：
@@ -79,7 +71,7 @@
           <img src="~@/assets/img/cdKey/input-error.png" alt="">
           {{infoData.phoneAlert}}
         </span>
-      </div>
+      </div> -->
       <!-- 所在地区 -->
       <div class="each_line">
         <span class="input_title">
@@ -87,10 +79,7 @@
           {{infoData.addressArea}}：
         </span>
         <div class="area_box middle_input">
-          <b-form-select v-model="selected" class="mb-3 area_input" size="sm">
-            <option value="a">河南省/郑州市/金水区</option>
-            <option value="b">Option B (disabled)</option>
-          </b-form-select>
+          <input type="text" class="address_input middle_input" placeholder="请选择收货地址" id="city" @click="shooseCity">
         </div>
         <span class="input_error">
           <img src="~@/assets/img/cdKey/input-error.png" alt="">
@@ -103,7 +92,7 @@
           <span class="required">*</span>
           {{infoData.detailAddress}}：
         </span>
-        <textarea rows="3" class="address_detail middle_textarea" :placeholder="infoData.addressPrompt"></textarea>
+        <textarea rows="3" class="address_detail middle_textarea" :placeholder="infoData.addressPrompt" v-model="addressDetail.street"></textarea>
         <span class="input_error">
           <img src="~@/assets/img/cdKey/input-error.png" alt="">
             {{infoData.addressAlert}}
@@ -121,9 +110,9 @@
           {{infoData.defaultAlert}}
         </span>
       </div>
-      <!-- 保存 -->
+      <!-- 保存 新增/修改-->
       <div class="save_address">
-        <button class="save_btn">{{infoData.save}}</button>
+        <button class="save_btn" @click="saveAddress">{{infoData.save}}</button>
       </div>
     </div>
     <!-- 模态框 删除收货地址-->
@@ -139,8 +128,11 @@
 </template>
 
 <script>
+import cityMethod from '@/assets/js/citySet'
 import axios from 'axios'
 import DeleteAddress from './form/delete-address'
+import AddressService from '@/service/address/AddressService'
+import UserService from '@/service/user/UserService'
 export default {
   name: 'AddressManagement',
   data () {
@@ -152,7 +144,22 @@ export default {
       addressState: '',
       modalTitle: '',
       data: {},
-      language: this.$store.state.language
+      language: this.$store.state.language,
+      addressService: AddressService,
+      userService: UserService,
+      addressList: [],
+      showAddressBox: false,
+      area: '',
+      addressDetail: {
+        receiver: '',
+        phone: '',
+        province: '',
+        city: '',
+        district: '',
+        street: '',
+        creator: localStorage.getItem('userid')
+      },
+      addressId: ''
     }
   },
   components: {
@@ -169,7 +176,112 @@ export default {
       this.getData()
     }
   },
+  created () {
+    this.loadUserAddress() // 根据用户 id 获取收货地址
+  },
   methods: {
+    // 选择省市区
+    shooseCity (e) {
+      cityMethod.SelCity(e.target, e)
+    },
+    // 根据用户 id 获取收货地址
+    loadUserAddress () {
+      this.userService.fetchAddress(
+        localStorage.getItem('userid')
+      ).then((results) => {
+        if (results.data.success) {
+          this.addressList = results.data.data
+          if (this.addressList == null) {
+            this.addressList = []
+          }
+        } else {
+          this.$toaster.error(results.data.msg)
+        }
+      })
+    },
+    // 显示新增收货地址 / 修改收货地址
+    operateAddress (state, info) {
+      this.operateState = state
+      this.showAddressBox = true
+      if (state == 'alter') {
+        this.addressId = info._id
+        this.addressDetail = info
+        this.area = info.province + '-' + info.city + '-' + info.district
+        $('#city').val(this.area)
+        console.log(this.area)
+      }
+    },
+    // 保存地址
+    saveAddress () {
+      if (this.operateState == 'add') {
+        this.area = $('#city').val()
+        this.area = this.area.split('-')
+        this.addressDetail.province = this.area[0]
+        this.addressDetail.city = this.area[1]
+        this.addressDetail.district = this.area[2]
+        this.createAddress() // 新建收货地址
+      } else {
+        this.updateAddress() // 根据 id 更新收货地址
+      }
+    },
+    // 新建收货地址
+    createAddress () {
+      this.addressService.createAddress(
+        this.addressDetail
+      ).then((results) => {
+        if (results.data.success) {
+          this.addressList.push(results.data.data)
+          this.showAddressBox = false
+          this.$toaster.success('新增地址成功')
+          this.addressDetail = {
+            receiver: '',
+            phone: '',
+            province: '',
+            city: '',
+            district: '',
+            street: '',
+            creator: localStorage.getItem('userid')
+          }
+        } else {
+          this.$toaster.error(results.data.success)
+        }
+      })
+    },
+    // 根据 id 更新收货地址
+    updateAddress () {
+      this.addressService.updateAddress(
+        this.addressId,
+        this.addressDetail
+      ).then((results) => {
+        if (results.data.success) {
+          this.$toaster.success('地址修改成功')
+          this.showAddressBox = false
+          for (var i = 0; i < this.addressList.length; i++) {
+            if (this.addressList[i]._id == this.addressId) {
+              this.addressList.splice(i, 1, results.data.data)
+            }
+          }
+        } else {
+          this.$toaster.error(results.data.msg)
+        }
+      })
+    },
+    // 删除地址
+    deleteAddress (id) {
+      this.addressService.deleteAddress(id).then((results) => {
+        if (results.data.success) {
+          this.$toaster.success('地址删除成功')
+          this.showAddressBox = false
+          for (var i = 0; i < this.addressList.length; i++) {
+            if (this.addressList[i]._id == id) {
+              this.addressList.splice(i, 1)
+            }
+          }
+        } else {
+          this.$toaster.error(results.data.msg)
+        }
+      })
+    },
     getData () {
       var that = this
       axios.get(this.$store.state.url + '/pages/personal-center/setup-info/' + this.$store.state.jsonUrl).then(function (data) {
@@ -311,7 +423,7 @@ export default {
   width: 30%;
 }
 .middle_input > input {
-  width: 30%;
+  width: 100%;
   float: left;
 }
 .middle_input > span {
@@ -336,5 +448,9 @@ export default {
 }
 .save_btn {
   @include yellow_btn;
+}
+.no_data{
+  text-align: center;
+  padding:15px 0;
 }
 </style>

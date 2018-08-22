@@ -10,26 +10,27 @@
           <li>订单状态</li>
           <li>交易操作</li>
       </ul>
-      <div class="content">
+      <div class="content" v-for="item in order" :key="item._id">
         <div class="title">
-            <p>订单号：123456789123456789</p>
-            <p>下单时间：2018-03-11&nbsp;&nbsp;22:30:56</p>
+            <p>订单号：{{item._id}}</p>
+            <p>下单时间：{{item.createdAt}}</p>
         </div>
         <div class="basic-info">
             <ul>
                 <li class="photo"></li>
                 <li class="present">
-                    <p>我是产品名称我是产品名称我是产品名称我是产品名称我是产品名称我是产品名称我是产品名称</p>
+                    <p>{{item.product.describe}}</p>
                 </li>
                 <li class="number">
-                    <p>1</p>
+                    <p>{{item.quantity}}</p>
                 </li>
                 <li class="mode">
-                    <p>ETH</p>
+                    <p v-if="item.pay == 0">兑换码</p>
+                    <p v-if="item.pay == 1">ETH</p>
                 </li>
                 <li>
                     <p>物流运输中</p>
-                    <p id="order_detail" @click="$router.push('/order-detail')">订单详情</p>
+                    <p id="order_detail" @click="jump(item._id)">订单详情</p>
                 </li>
                 <li class="handle">
                     <p>确认收货</p>
@@ -44,21 +45,34 @@
 </template>
 
 <script>
-import OrderService from '@/service/order/OrderService'
 export default {
   name: 'Entry',
+  props: ['order'],
   data () {
     return {
-      orderService: OrderService
+      allUserOrder: []
     }
   },
   created () {
-    this.getOrder()
+    for (let i = 0; i < this.order.length; i++) {
+      this.order[i].createdAt = this.formatDate(this.order[i].createdAt)
+    }
   },
   methods: {
-    getOrder () {
-      this.orderService.fetchAllOrder({}).then((results) => {
-        console.log(results)
+    formatDate (now) {
+      let time = new Date(now)
+      let year = time.getFullYear()
+      let month = time.getMonth() + 1
+      let date = time.getDate()
+      let hour = time.getHours()
+      let minute = time.getMinutes()
+      let second = time.getSeconds()
+      return year + '-' + month + '-' + date + '   ' + hour + ':' + minute + ':' + second
+    },
+    jump (id) {
+      this.$router.push({
+        path: '/order-detail',
+        query: {orderid: id}
       })
     }
   }

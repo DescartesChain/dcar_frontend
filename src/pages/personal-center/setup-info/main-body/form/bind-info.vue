@@ -4,7 +4,7 @@
       <input type="text" class="user_input" placeholder="请输入新的用户名，2~8位字符" v-model="name">
     </div>
     <div v-if="message.state == 'email'">
-      <input type="text" class="user_input" placeholder="请输入邮箱地址">
+      <input type="text" class="user_input" placeholder="请输入邮箱地址" v-model="email">
     </div>
     <div class="row auth_code">
       <div class="col-md-7">
@@ -45,12 +45,18 @@ export default {
       checkCode: '',
       identifyCodes: '1234567890abcdefghijklmnopqrstuvwxyz',
       identifyCode: '',
-      name: ''
+      name: '',
+      email: ''
     }
   },
   mounted () {
     this.identifyCode = ''
     this.makeCode(this.identifyCodes, 4)
+  },
+  created () {
+    this.name = ''
+    this.email = ''
+    this.picLyanzhengma = ''
   },
   methods: {
     randomNum (min, max) {
@@ -73,16 +79,42 @@ export default {
     // 模态框关闭
     cancel () {
       this.$emit('close-modal')
+      this.picLyanzhengma = ''
     },
     Login () {
+      console.log()
       if (this.message.state == 'username') {
         if (this.name == '') {
           this.$toaster.error('用户名不能为空')
         } else {
           if (this.picLyanzhengma == this.identifyCode) {
-            this.userService.alterUserInfo(localStorage.getItem('userid')).then((results) => {
+            this.userService.alterUserInfo(localStorage.getItem('userid'), {
+              'name': this.name
+            }).then((results) => {
               if (results.data.success) {
-                this.$toaster.success('修改成功')
+                this.$toaster.success('修改用户名成功')
+                this.picLyanzhengma = ''
+              } else {
+                this.$toaster.error(results.data.msg)
+              }
+            })
+          } else {
+            this.$toaster.error('验证码错误')
+          }
+        }
+      } else if (this.message.state == 'email') {
+        if (this.email == '') {
+          this.$toaster.error('邮箱不能为空')
+        } else {
+          if (this.picLyanzhengma == this.identifyCode) {
+            this.userService.alterUserInfo(localStorage.getItem('userid'), {
+              'email': this.email
+            }).then((results) => {
+              if (results.data.success) {
+                this.$toaster.success('修改邮箱成功')
+                this.picLyanzhengma = ''
+              } else {
+                this.$toaster.error(results.data.msg)
               }
             })
           } else {
