@@ -35,6 +35,7 @@ const scrollBehavior = (to, from, savedPosition) => {
   }
 }
 
+// 路由列表
 export default new Router({
   mode: 'history',  // require service support
   scrollBehavior,
